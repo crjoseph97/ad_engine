@@ -8,7 +8,7 @@ import (
 )
 
 //------------------------------------------
-
+// Data structure to hold the ad Data and scores per User Group
 type sample_Ad struct {
 	Age struct {
 		young float64
@@ -22,6 +22,7 @@ type sample_Ad struct {
 	content string
 }
 
+// Data structure to hold the user data
 type user_det struct {
 	age_group string
 	gender    string
