@@ -1,9 +1,9 @@
-package ad_engine
+package engine
 
 import (
+	"fmt"
 	"net/http"
 
-	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/labstack/echo"
 )
 
@@ -19,7 +19,7 @@ type sample_Ad struct {
 		male   float64
 		female float64
 	}
-	content string
+	Content string
 }
 
 // Data structure to hold the user data
@@ -28,34 +28,30 @@ type user_det struct {
 	gender    string
 }
 
-func Engine(c echo.Context) error {
+func Recommend(c echo.Context) error {
 	request := new(struct {
-		Uid int `json:"Uid"`
+		Uid int `json:"Uid" form:"Uid"`
 	})
 
 	if err := c.Bind(request); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request")
 	}
 
-	err := validation.ValidateStruct(&request,
-		validation.Field(&request.Uid, validation.Required),
-	)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "No ID")
-	}
+	fmt.Println(request.Uid)
 
-	//------------------------------------------------------API Call to get User Details
+	//------------------------------------------------------API Call to get User Details------------------------------------------------
 	var user_1 user_det // Here User 1 is mid aged, Female Customer
 	user_1.age_group = "mid"
 	user_1.gender = "female"
 
-	//------------------------------------------------------API Call to get Ads
+	//------------------------------------------------------API Call to get Ads---------------------------------------------------------
 	var ad_1 sample_Ad // Ads will have to be scored from client facing team. This is just a sample scoring
 	ad_1.Age.mid = 0.3
 	ad_1.Age.old = 0.2
 	ad_1.Age.young = 0.1
 	ad_1.Gender.female = 0.3
 	ad_1.Gender.male = 0.5
+	ad_1.Content = "Display Ad 1"
 
 	var ad_2 sample_Ad // Ads will have to be scored from client facing team. This is just a sample scoring
 	ad_2.Age.mid = 0.4
@@ -63,16 +59,20 @@ func Engine(c echo.Context) error {
 	ad_2.Age.young = 0.4
 	ad_2.Gender.female = 0.5
 	ad_2.Gender.male = 0.3
+	ad_2.Content = "Display Ad 2"
 
-	var ads []sample_Ad
+	var ads [10]sample_Ad
+	if len(ads) == 0 {
+		fmt.Println("Cant Add-----", ad_1)
+	}
 	ads[0] = ad_1
 	ads[1] = ad_2
 
 	//Calculate Score for each Ad
 	var total float64
 	var result string
-
-	for i := range ads {
+	var i int = 0
+	for i = range ads {
 		if user_1.age_group == "mid" {
 			total = total + ads[i].Age.mid
 		} else if user_1.age_group == "old" {
@@ -88,8 +88,10 @@ func Engine(c echo.Context) error {
 		}
 
 		if total > 0.7 {
-			result = ads[i].content
+			result = ads[i].Content
+			break
 		}
 	}
+	fmt.Println(result)
 	return c.JSON(http.StatusOK, result)
 }
