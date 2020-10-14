@@ -1,7 +1,7 @@
 package main
 
 import (
-	"git.hifx.in/ad_engine/routes"
+	"github.com/ad_engine/routes"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
