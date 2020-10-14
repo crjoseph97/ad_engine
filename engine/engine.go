@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
+	"os"
+	"log"
 )
 
 //------------------------------------------
@@ -93,5 +95,13 @@ func Recommend(c echo.Context) error {
 		}
 	}
 	fmt.Println(result)
+	
+	file, err := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+    	if err != nil {
+        	log.Fatal(err)
+    	}
+    	log.SetOutput(file)
+	log.Println(result)
+	
 	return c.JSON(http.StatusOK, result)
 }
