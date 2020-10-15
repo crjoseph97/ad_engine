@@ -106,6 +106,9 @@ func Recommend(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func Sample() {
+func Sample(c echo.Context) error {
+	
 	fmt.Println("this was forked..?")
+	return c.JSON(http.StatusOK, result)
+	
 }
